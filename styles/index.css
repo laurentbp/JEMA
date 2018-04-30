@@ -28,7 +28,7 @@ body{
 #branding{
 	padding:0;
 	padding-top:5px;
-	margin-right:20px;
+	margin-right:10px;
 	margin-left:10px;
 }
 
@@ -48,19 +48,19 @@ body{
 
 .nav-main-link, .nav-secondary-link{
 	border-top:5px solid #90c695;
-	width:170px;
-	letter-spacing: -1px;
+	width:190px;
+	letter-spacing: 1px;
 }
 
 .nav-main-link{
 	border-top:5px solid #87d37c;
 	font-size:1.5em;
-	width:130px;
+	width:140px;
 }
 
 .secondary-link-background{
 	height:50px;
-	width:170px;
+	width:190px;
 	position:absolute;
 	cursor:pointer;
 	top:-50px;
@@ -70,7 +70,7 @@ body{
 
 .main-link-background{
 	height:50px;
-	width:130px;
+	width:140px;
 	position:absolute;
 	cursor:pointer;
 	top:-50px;
@@ -116,10 +116,15 @@ header{
 .last-news{
 	background-color: rgba(0,0,0,0.1);
 	color:white;
-	margin-bottom:140px;
+	position: absolute;
+	top:0;
+	height:40px;
+	width:100%;
+	transition: 0.2s ease-in-out;
 }
 
 .last-news p{
+	transition: 0.2s ease-in-out;
 	padding:10px;
 	max-width:45%;
 }
@@ -151,6 +156,7 @@ header{
 	min-width:200px;
 	padding:0.5%;
 	margin:auto;
+	margin-top:180px;
 	border:2px solid white;
 	background-color:transparent;
 }
@@ -165,6 +171,7 @@ header{
 header h1{
 	font-size:10em;
 	font-weight:900;
+	color:#87d37c;
 	background: url("../media/images/title_background.jpg"),rgba(255,255,255,1);
 	-webkit-text-fill-color: transparent;
 	-webkit-background-clip: text;
@@ -215,6 +222,33 @@ header h2{
 	transform: translatey(0px);
 	animation: float 1s ease-in-out infinite;
 }
+
+.top-anchor{
+	position:fixed;
+	right:40px;
+	bottom:40px;
+	color:white;
+	background-color:#333;
+	z-index:3;
+	width:60px;
+	padding:10px 12px 10px 12px;
+	height:60px;
+	font-size:2.5em;
+	transition: transform 0.2s ease-in-out;
+	box-shadow:0px 8px 12px -5px #080808;
+	display:none;
+}
+
+.top-anchor:focus{
+	color:white;
+	background-color:#333;
+}
+
+.top-anchor:hover, .top-anchor:active{
+	color:#333;
+	background-color:white;
+}
+
 .about h2{
 	font-size:2em;
 	font-weight: bold;
@@ -227,34 +261,44 @@ header h2{
 	margin:5%;
 }
 
-.student-redirection{
-	background-color: #90c695;
+.student-redirection,.company-redirection{
 	padding:30px;
 	height:500px;
 	transition:border 0.1s ease-in-out;
 	color:white;
+	overflow: hidden;
+}
+
+.student-redirection{
+	background-color: #90c695;
 }
 
 .company-redirection{
 	background-color: #26A65B;
-	padding:30px;
-	height:500px;
-	color:white;
-	transition:border 0.1s ease-in-out;
 }
 
 .student-redirection:hover, .company-redirection:hover{
 	transition:border 0.1s ease-in-out;
 }
 
-.student-redirection .glyphicon, .company-redirection .glyphicon{
+.left-student,.left-company{
+	transition: 0.2s ease-in-out;
+}
+
+.right-student,.right-company{
+	position:absolute;
+	font-size:4em;
+	top:250px;
+	right:-50px;
+}
+
+.big-glyphicon{
 	font-size:4em;
 	font-weight: 900;
 	border:5px solid white;
 	border-radius:50px;
-	padding:20px;
+	padding:4%;
 	margin:2%;
-	animation: float 2s ease-in-out infinite;
 }
 
 .student-redirection h4, .company-redirection h4{
@@ -273,27 +317,27 @@ header h2{
 	transition: 0.2s ease-in-out;
 }
 
-.student-redirection p a{
-	color:#90c695;
+.footer-list, .inner-footer-list{
+	margin:0;
+	padding:0;
 }
 
-.company-redirection p a{
-	color:#26A65B;
+.footer-list li, .inner-footer-list li{
+	list-style-type: none;
+	margin:0;
+	padding:0;
+	text-align:left;
+	margin-left:35%;
 }
 
-.student-redirection p a, .company-redirection p a{
-	background-color:white;
-	padding:6px;
-	font-weight:bolder;
-	font-size:1.1em;
-	border:2px solid white;
-	transition: 0.1s ease-in-out;
+.inner-footer-list li{
+	text-align:left;
+	margin-left:10%;
 }
 
-.student-redirection p a:hover, .company-redirection p a:hover{
-	text-decoration: none;
-	background-color:transparent;
-	color:white;
+.footer-list a{
+	text-decoration:none;
+	color:#333;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -303,7 +347,7 @@ header h2{
 	header h2 {
 		font-size: 2em;
 	}
-	.student-redirection .glyphicon, .company-redirection .glyphicon{
+	.big-glyphicon{
 		font-size:3em;
 	}
 }
@@ -315,7 +359,7 @@ header h2{
   header h2 {
     font-size: 1.5em;
   }
-	.student-redirection .glyphicon, .company-redirection .glyphicon{
+	.big-glyphicon{
 		font-size:2em;
 	}
 	.student-redirection h4, .company-redirection h4{
@@ -331,7 +375,7 @@ header h2{
   header h2 {
     font-size: 1em;
   }
-	.student-redirection .glyphicon, .company-redirection .glyphicon{
+	.big-glyphicon{
 		font-size:2em;
 	}
 	.student-redirection h4, .company-redirection h4{
@@ -346,7 +390,7 @@ header h2{
   header h2 {
     font-size: 1em;
   }
-	.student-redirection .glyphicon, .company-redirection .glyphicon{
+	.big-glyphicon{
 		font-size:1em;
 	}
 	.student-redirection h4, .company-redirection h4{
