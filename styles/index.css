@@ -1,0 +1,355 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Indie+Flower');
+
+body{
+	padding-top:50px;
+	font-family: 'Roboto', sans-serif;
+}
+
+.container-fluid,header h1, header h2{
+	margin:0;
+	padding:0;
+}
+
+.navbar-default{
+	height:50px;
+}
+
+.navbar .navbar-nav {
+	display: inline-block;
+	float: none;
+	vertical-align: top;
+	font-family: 'Indie Flower', cursive;
+}
+
+.navbar .navbar-collapse{
+	text-align: center;
+}
+
+#branding{
+	padding:0;
+	padding-top:5px;
+	margin-right:20px;
+	margin-left:10px;
+}
+
+.navbar-nav{
+	height:50px;
+	position:relative;
+}
+
+.navbar-nav img{
+	height:90px;
+	margin:0;
+	padding:0;
+	margin-top:-15px;
+	box-shadow:0px 5px 9px -5px #080808;
+	border-radius:50px;
+}
+
+.nav-main-link, .nav-secondary-link{
+	border-top:5px solid #90c695;
+	width:170px;
+	letter-spacing: -1px;
+}
+
+.nav-main-link{
+	border-top:5px solid #87d37c;
+	font-size:1.5em;
+	width:130px;
+}
+
+.secondary-link-background{
+	height:50px;
+	width:170px;
+	position:absolute;
+	cursor:pointer;
+	top:-50px;
+	left:0;
+	background-image:url('../media/images/nav_secondary_links_background.jpg');
+}
+
+.main-link-background{
+	height:50px;
+	width:130px;
+	position:absolute;
+	cursor:pointer;
+	top:-50px;
+	left:0;
+	background-image:url('../media/images/nav_main_links_background.jpg');
+}
+
+.navbar-default .navbar-nav>li>a {
+	font-weight:bold;
+	transition:0.2s;
+}
+
+.contact{
+	float:left;
+	margin-top:-42px;
+	margin-left:10px;
+	background-color:#90c695;
+	border:2px solid #90c695;
+	padding:5px 15px 5px 15px;
+	color:white;
+	transition: 0.1s;
+	overflow:hidden;
+}
+
+.contact:hover{
+	text-decoration: none;
+	color:white;
+	background-color: #87d37c;
+	transition: 0.1s;
+}
+
+header{
+	overflow:hidden;
+	margin:0;
+	background-image: url('../media/images/index_header.jpg');
+	height:630px;
+	background-attachment: fixed;
+	background-position: bottom;
+	position:relative;
+	margin-bottom:20px;
+}
+
+.last-news{
+	background-color: rgba(0,0,0,0.1);
+	color:white;
+	margin-bottom:140px;
+}
+
+.last-news p{
+	padding:10px;
+	max-width:45%;
+}
+
+@media only screen and (max-width: 768px) {
+  .last-news p{
+  	max-width:100%;
+  }
+}
+
+.last-news a{
+	color:white;
+	font-weight:bold;
+	background-color:#90c695;
+	border:2px solid #90c695;
+	border-radius:20px;
+	padding:4px 12px 4px 12px;
+	transition:0.1s;
+}
+
+.last-news a:hover{
+	text-decoration: none;
+	background-color:transparent;
+	transition:0.1s;
+}
+
+.main-title-border{
+	width:38%;
+	min-width:200px;
+	padding:0.5%;
+	margin:auto;
+	border:2px solid white;
+	background-color:transparent;
+}
+
+.main-title{
+	padding:8%;
+	width:100%;
+	margin:auto; 
+	background-color:white;
+}
+
+header h1{
+	font-size:10em;
+	font-weight:900;
+	background: url("../media/images/title_background.jpg"),rgba(255,255,255,1);
+	-webkit-text-fill-color: transparent;
+	-webkit-background-clip: text;
+	text-rendering: geometricPrecision;
+	letter-spacing: 20px;
+	margin-bottom:0px;
+	font-family: 'Indie Flower', cursive;
+}
+
+header h2{
+	font-size:2em;
+	font-weight:lighter;
+	letter-spacing: 5px;
+	font-family: 'Indie Flower', cursive;
+}
+
+.arrow-bottom{
+	display:inline-block;
+	position: absolute;
+	bottom:5px;
+	width:100%;
+	text-align: center;
+	font-size:3em;
+}
+
+.arrow-bottom a, .arrow-bottom a:hover{
+	color:white;
+}
+
+.arrow-bottom a:hover .glyphicon-arrow-down{
+	transform: translatey(0px);
+	animation: float 0.5s ease-in-out infinite;
+}
+
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-10px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+
+.glyphicon-arrow-down{
+	transform: translatey(0px);
+	animation: float 1s ease-in-out infinite;
+}
+.about h2{
+	font-size:2em;
+	font-weight: bold;
+	letter-spacing: 1px;
+	font-family: 'Indie Flower', cursive;
+	margin:3%;
+}
+
+.about h3{
+	margin:5%;
+}
+
+.student-redirection{
+	background-color: #90c695;
+	padding:30px;
+	height:500px;
+	transition:border 0.1s ease-in-out;
+	color:white;
+}
+
+.company-redirection{
+	background-color: #26A65B;
+	padding:30px;
+	height:500px;
+	color:white;
+	transition:border 0.1s ease-in-out;
+}
+
+.student-redirection:hover, .company-redirection:hover{
+	transition:border 0.1s ease-in-out;
+}
+
+.student-redirection .glyphicon, .company-redirection .glyphicon{
+	font-size:4em;
+	font-weight: 900;
+	border:5px solid white;
+	border-radius:50px;
+	padding:20px;
+	margin:2%;
+	animation: float 2s ease-in-out infinite;
+}
+
+.student-redirection h4, .company-redirection h4{
+	font-size:3.2em;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+
+.student-redirection p, .company-redirection p{
+	width:250px;
+	margin:auto;
+	text-align: justify;
+	margin-top:1%;
+	font-size:1.2em;
+	opacity:0.2;
+	transition: 0.2s ease-in-out;
+}
+
+.student-redirection p a{
+	color:#90c695;
+}
+
+.company-redirection p a{
+	color:#26A65B;
+}
+
+.student-redirection p a, .company-redirection p a{
+	background-color:white;
+	padding:6px;
+	font-weight:bolder;
+	font-size:1.1em;
+	border:2px solid white;
+	transition: 0.1s ease-in-out;
+}
+
+.student-redirection p a:hover, .company-redirection p a:hover{
+	text-decoration: none;
+	background-color:transparent;
+	color:white;
+}
+
+@media only screen and (max-width: 1200px) {
+	header h1 {
+		font-size: 8em;
+	}
+	header h2 {
+		font-size: 2em;
+	}
+	.student-redirection .glyphicon, .company-redirection .glyphicon{
+		font-size:3em;
+	}
+}
+
+@media only screen and (max-width: 992px) {
+  header h1 {
+    font-size: 5.5em;
+  }
+  header h2 {
+    font-size: 1.5em;
+  }
+	.student-redirection .glyphicon, .company-redirection .glyphicon{
+		font-size:2em;
+	}
+	.student-redirection h4, .company-redirection h4{
+		font-size:2em;
+	}
+
+}
+
+@media only screen and (max-width: 768px) {
+  header h1 {
+    font-size: 3.5em;
+  }
+  header h2 {
+    font-size: 1em;
+  }
+	.student-redirection .glyphicon, .company-redirection .glyphicon{
+		font-size:2em;
+	}
+	.student-redirection h4, .company-redirection h4{
+		font-size:3em;
+	}
+}
+
+@media only screen and (max-width: 576px) {
+  header h1 {
+    font-size: 2.5em;
+  }
+  header h2 {
+    font-size: 1em;
+  }
+	.student-redirection .glyphicon, .company-redirection .glyphicon{
+		font-size:1em;
+	}
+	.student-redirection h4, .company-redirection h4{
+		font-size:3em;
+	}
+}
