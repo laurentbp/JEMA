@@ -31,9 +31,9 @@
 	          <ul class="nav navbar-nav">
 	            <li class="branding-container"><a id="branding" href="index.php"><img src="media/images/nav_branding.png" alt="Branding de la JEMA"></a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#about">Qui sommes-nous ?</a></li>
-	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#participate">Participer à une étude</a></li>
+	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#faq">Participer à une étude</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#member">Devenir membre actif</a></li>
-	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#news">Newsletter</a></li>
+	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#news">Actualités</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="student.php#contacter">Contact</a></li>
 	          </ul>
 	        </div>
@@ -111,6 +111,106 @@
 					<h2><span class="big-letter">L</span>e mot de la présidente</h2>
 					<h3>Mélissa Hoffmann-Bernard</h3> 
 				</div>
+			</div>
+			<div id="faq" class="rubrique faq-container">
+				<h2>FAQ</h2>
+				<h3>Comment participer à une étude ?</h3>
+				<h4><span class="big-letter">Q1</span> - Comment faire ma demande pour participer à une étude ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+				<h4><span class="big-letter">Q2</span> - Comment connaître les études en cours et les places disponibles ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+				<h4><span class="big-letter">Q3</span> - Une fois ma demande acceptée, que dois-je faire ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+				<h4><span class="big-letter">Q4</span> - Quelles missions peuvent m'être confiées ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+				<h4><span class="big-letter">Q5</span> - Suis-je rémunéré en participant à une étude ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+				<h4><span class="big-letter">Q6</span> - Que se passe-t-il si je ne réalise pas les missions demandées ou si le résultat n'est pas à la hauteur des attentes ? <span class="glyphicon glyphicon-triangle-bottom"></span></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
+			</div>
+			<div id="member" class="rubrique member-container">
+				<div class="col-lg-6">
+					<h2><span class="big-letter">V</span>ivez l'aventure de l'intérieur</h2>
+				</div>
+				<div class="col-lg-6 member">
+					<h3>Devenez membre actif !</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
+				</div>
+			</div>
+			<div id="news" class="rubrique news-container">
+				<h2>Actualités</h2>
+				<h3>Les dernières actualités de la JEMA</h3>
+				<?php 
+
+				try
+				{
+					$bdd = new PDO('mysql:host=localhost;dbname=jema', 'root', '');
+				}
+				catch (Exception $e)
+				{
+				        die('Erreur : ' . $e->getMessage());
+				}
+				$bdd->exec('SET NAMES utf8');
+				$bdd->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+				$news = $bdd->query('SELECT * FROM news');
+				$i=0;
+
+				while ($new = $news->fetch())
+				{
+					if($i==0){
+				?>
+						<div class="col-lg-12 full-news">
+					    	<div class="news-img">
+					    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
+					    	</div>
+					    	<div class="news-content">
+					    		<h4><?php echo $new['title']; ?></h4>
+					    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
+					    		<p class="news-preview"><?php if(strlen($new['content'])<600){ echo $new['content'];}else{ echo substr($new['content'],0,600).'[...]';} ?></p>
+					    		<p class="news-fullview"><?php echo $new['content']; ?></p>
+					    		<h6 class="see-more">Voir plus...</h6>
+					    	</div>
+					   	</div>
+			   	<?php
+					}
+					else{
+						if(($i%2)==0){
+				?>
+					<div class="col-lg-6 part-news news-margin">
+				<?php
+						}
+						else{
+				?>
+				    <div class="col-lg-6 part-news">
+				<?php
+						}
+				?>
+				    	<div class="news-img">
+				    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
+				    	</div>
+				    	<div class="news-content">
+				    		<h4><?php echo $new['title']; ?></h4>
+				    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
+				    		<p class="news-preview"><?php if(strlen($new['content'])<300){ echo $new['content'];}else{ echo substr($new['content'],0,300).'[...]';} ?></p>
+				    		<p class="news-fullview"><?php echo $new['content']; ?></p>
+				    		<h6 class="see-more">Voir plus...</h6>
+				    	</div>
+				   	</div>
+				<?php
+					}
+					$i++;
+				}
+
+				$news->closeCursor();
+				?>
 			</div>
 		</section>
 

@@ -109,28 +109,27 @@ jQuery(document).ready(function($){
   });
   $(function () {
     if ($(this).scrollTop() > 850){
-      $(".numbers-container").show();
+      $(".numbers-container").css({'opacity':'1'});
       state=1;
     }
     else{
-      $(".numbers-container").hide();
+      $(".numbers-container").css({'opacity':'0'});
       state=0;
     }
     $(window).scroll(function(){
       if ($(this).scrollTop() > 850) {
         if(state==0){
-          $(".numbers-container").fadeIn(function(){
-            $(".numbers").fadeIn();
-            $('.count').each(function () {
-                $(this).prop('Counter',0).animate({
-                    Counter: $(this).text()
-                }, {
-                    duration: 2000,
-                    easing: 'swing',
-                    step: function (now) {
-                        $(this).text(Math.ceil(now));
-                    }
-                });
+          $(".numbers-container").css({'opacity':'1'});
+          $(".numbers").fadeIn();
+          $('.count').each(function () {
+            $(this).prop('Counter',0).animate({
+                Counter: $(this).text()
+            }, {
+                duration: 2000,
+                easing: 'swing',
+                step: function (now) {
+                    $(this).text(Math.ceil(now));
+                }
             });
           });
           state=1;
@@ -241,6 +240,33 @@ jQuery(document).ready(function($){
           $('p').attr('class','');
           $('p:contains("2018")').attr('class','active-description');
         }
+      }
+    });
+  });
+  $(function () {
+    $(".faq-container h4").click(function(){
+      $(this).next("p").slideToggle("fast");
+    });
+  });
+  $(function () {
+    $(".see-more").click(function(){
+      $(this).prev().prev().hide();
+      $(this).prev().slideToggle("slow");
+      $(this).parent().parent().css({"height":'auto'});
+    });
+  });
+  $(function () {
+    if ($(this).scrollTop() > 3200 && $(this).scrollTop() < 4310){
+      var scroll = $(window).scrollTop()-3200;
+      $('.member-container h2').css({'webkit-transform':'translateY('+scroll+'px)'});
+    }
+    else if($(this).scrollTop() > 4310){
+      $('.member-container h2').css({'webkit-transform':'translateY(4310px)'});
+    }
+    $(window).scroll(function(){
+      if ($(this).scrollTop() > 3200 && $(this).scrollTop() < 4310) {
+        var scroll = $(window).scrollTop()-3200;
+        $('.member-container h2').css({'webkit-transform':'translateY('+scroll+'px)'});
       }
     });
   });
