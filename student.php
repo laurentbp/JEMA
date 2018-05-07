@@ -34,7 +34,7 @@
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#faq">Participer à une étude</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#member">Devenir membre actif</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#news">Actualités</a></li>
-	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="student.php#contacter">Contact</a></li>
+	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#contact">Contact</a></li>
 	          </ul>
 	        </div>
 		</nav>
@@ -176,7 +176,7 @@
 					    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
 					    		<p class="news-preview"><?php if(strlen($new['content'])<600){ echo $new['content'];}else{ echo substr($new['content'],0,600).'[...]';} ?></p>
 					    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-					    		<h6 class="see-more">Voir plus...</h6>
+					    		<a href="news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a>
 					    	</div>
 					   	</div>
 			   	<?php
@@ -184,12 +184,12 @@
 					else{
 						if(($i%2)==0){
 				?>
-					<div class="col-lg-6 part-news news-margin">
+					<div class="col-lg-6 part-news">
 				<?php
 						}
 						else{
 				?>
-				    <div class="col-lg-6 part-news">
+				    <div class="col-lg-6 part-news news-margin">
 				<?php
 						}
 				?>
@@ -201,7 +201,7 @@
 				    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
 				    		<p class="news-preview"><?php if(strlen($new['content'])<300){ echo $new['content'];}else{ echo substr($new['content'],0,300).'[...]';} ?></p>
 				    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-				    		<h6 class="see-more">Voir plus...</h6>
+				    		<a href="news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a>
 				    	</div>
 				   	</div>
 				<?php
@@ -210,6 +210,205 @@
 				}
 
 				$news->closeCursor();
+				?>
+			</div>
+			<div id="contact" class="rubrique contact-container">
+				<h2><span class="big-letter">N</span>ous contacter</h2>
+				<h3>Une question ? Envoyez-nous un mail !</h3>
+				<?php
+				  /*
+				   ********************************************************************************************
+				   CONFIGURATION
+				   ********************************************************************************************
+				   */
+				     // destinataire est votre adresse mail.
+				     $destinataire = 'jema@supagro.fr';
+				     //$destinataire = 'l.blancpattin@gmail.com';
+
+				     // copie ? (envoie une copie au visiteur)
+				     $copie = 'no';
+
+				     // Action du formulaire (si votre page a des paramètres dans l'URL)
+				     // si cette page est index.php?page=contact alors mettez index.php?page=contact
+				     // sinon, laissez vide
+				     $form_action = '';
+
+				   /*
+				     ********************************************************************************************
+				     FIN DE LA CONFIGURATION
+				     ********************************************************************************************
+				   */
+
+				   /*
+				    * cette fonction sert à nettoyer et enregistrer un texte
+				    */
+				   function Rec($text)
+				   {
+				     $text = htmlspecialchars(trim($text), ENT_QUOTES);
+				     if (1 === get_magic_quotes_gpc())
+				     {
+				       $text = stripslashes($text);
+				     }
+
+				     $text = nl2br($text);
+				     return $text;
+				   };
+
+				   /*
+				    * Cette fonction sert à vérifier la syntaxe d'un email
+				    */
+				   function IsEmail($email)
+				   {
+				     $value = preg_match('/^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!\.)){0,61}[a-zA-Z0-9_-]?\.)+[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!$)){0,61}[a-zA-Z0-9_]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/', $email);
+				     return (($value === 0) || ($value === false)) ? false : true;
+				   }
+
+				   // formulaire envoyé, on récupère tous les champs.
+				   $nom     = (isset($_POST['nom']))     ? Rec($_POST['nom'])     : '';
+				   $email   = (isset($_POST['email']))   ? Rec($_POST['email'])   : '';
+
+				   if (!preg_match("#^[a-z0-9._-]+@(hotmail|live|msn).[a-z]{2,4}$#", $email)) // On filtre les serveurs qui rencontrent des bogues.
+				   {
+				     $passage_ligne = "\r\n";
+				   }
+				   else
+				   {
+				     $passage_ligne = "\n";
+				   }
+
+				   $objet   = (isset($_POST['objet']))   ? Rec($_POST['objet'])   : '';
+				   $message_content = (isset($_POST['message'])) ? Rec($_POST['message']) : '';
+				   $email_confirm = (isset($_POST['email_confirm'])) ? Rec($_POST['email_confirm']) : '';
+				   $message = 'Sender : '.$email.$passage_ligne;
+				   $message .= 'Name : '.$nom.$passage_ligne;
+				   $message .= 'Message : '.$message_content.$passage_ligne;
+
+				   $err_nom=0;
+				   $err_email=0;
+				   $err_message=0;
+				   $err_email_valide=0;
+				   $err_email_confirm = 0;
+				   $err_formulaire = false; // sert pour remplir le formulaire en cas d'erreur si besoin
+
+				   if (isset($_POST['envoi']))
+				   {
+				     // Si toutes les conditions du formulaire sont réunies (variables non vides, email valide et confirmation de l'email valide)...
+				     if (($nom != '') && ($email != '') && ($message != '') && (IsEmail($email) != false) && ($email === $email_confirm))
+				     {
+				       // les 4 variables sont remplies, on génère puis envoie le mail
+				       $headers  = 'From:'.$nom.' <noreply@laurentblancpattin.com>' . "\r\n";
+				       $headers .= 'Reply-To: '.$email. "\r\n" ;
+				       //$headers .= 'X-Mailer:PHP/'.phpversion();
+
+				       // Remplacement de certains caractères spéciaux
+				       $message = str_replace("&#039;","'",$message);
+				       $message = str_replace("&#8217;","'",$message);
+				       $message = str_replace("&quot;",'"',$message);
+				       $message = str_replace('&lt;br&gt;','',$message);
+				       $message = str_replace('&lt;br /&gt;','',$message);
+				       $message = str_replace("&lt;","&lt;",$message);
+				       $message = str_replace("&gt;","&gt;",$message);
+				       $message = str_replace("&amp;","&",$message);
+
+				       // Envoi du mail
+				       if (mail($destinataire, $objet, $message, $headers)){
+				          echo '<div class="form-group has-success text-center alerts">
+				            <span class="help-block">Your message has been successfully sent !</span>
+				          </div>';
+				       }
+				       else{
+				          echo '<div class="form-group has-error text-center alertf">
+				            <span class="help-block">The mail sending failed, please retry.</span>
+				          </div>';
+				       };
+				     }
+				     else
+				     {
+				       // toutes les conditions ne sont pas réunies...
+				       if($nom == '') $err_nom=1;
+				       if($email == '') $err_email=1;
+				       if($message == '') $err_message=1;
+				       if(IsEmail($email) == false) $err_email_valide=1;
+				       if($email!=$email_confirm) $err_email_confirm=1;
+				       $err_formulaire=true;
+				     };
+				   }; // fin du if (!isset($_POST['envoi']))
+
+				  echo '
+				    <div class="contact">
+				      <form method="post" action="'.$form_action.'">
+				           <fieldset>';
+				             if($err_nom==0){
+				               echo '<div class="form-group">
+				                 <label for="nom">Nom* :</label>
+				                 <input class="form-control" type="text" id="nom" name="nom" placeholder="Votre nom" value="'.stripslashes($nom).'" tabindex="1" />
+				               </div>';
+				             }
+				             else{
+				               echo '<div class="form-group has-warning">
+				                 <label for="nom">Nom* :</label>
+				                 <input class="form-control" type="text" id="nom" name="nom" placeholder="Votre nom" value="'.stripslashes($nom).'" tabindex="1" />
+				                 <span class="help-block">Veuillez remplir ce champ</span>
+				               </div>';
+				             };
+				             if($err_email==0 && $err_email_valide==0){
+				               echo '<div class="form-group">
+				                 <label for="email">Adresse mail* :</label>
+				                 <input class="form-control" type="text" id="email" name="email" placeholder="Votre adresse mail" value="'.stripslashes($email).'" tabindex="2" />
+				               </div>';
+				             }
+				             elseif($err_email==1){
+				               echo '<div class="form-group has-warning">
+				                 <label for="email">Adresse mail* :</label>
+				                 <input class="form-control" type="text" id="email" name="email" placeholder="Votre adresse mail" value="'.stripslashes($email).'" tabindex="2" />
+				                 <span class="help-block">Veuillez remplir ce champ</span>
+				               </div>';
+				             }
+				             else{
+				               echo '<div class="form-group has-error">
+				                 <label for="email">Adresse mail* :</label>
+				                 <input class="form-control" type="text" id="email" name="email" placeholder="Votre adresse mail" value="'.stripslashes($email).'" tabindex="2" />
+				                 <span class="help-block">L\'adresse doit suivre le format suivant : "email@exemple.com"</span>
+				               </div>';
+				             };
+				             if($err_email_confirm==0){
+				               echo '<div class="form-group">
+				                 <label for="email">Confirmez votre adresse mail* :</label>
+				                 <input class="form-control" type="text" id="email_confirm" name="email_confirm" placeholder="Confirmez votre adresse mail" value="'.stripslashes($email_confirm).'" tabindex="3" />
+				               </div>';
+				             }
+				             else{
+				               echo '<div class="form-group has-error">
+				                 <label for="email">Confirmez votre adresse mail* :</label>
+				                 <input class="form-control" type="text" id="email_confirm" name="email_confirm" placeholder="Confirmez votre adresse mail" value="'.stripslashes($email_confirm).'" tabindex="3" />
+				                 <span class="help-block">Les adresse mail ne correspondent pas</span>
+				               </div>';
+				             };
+				               echo '<div class="form-group">
+				                 <label for="objet">Objet de votre message :</label>
+				                 <input class="form-control" type="text" id="objet" name="objet" placeholder="Objet du message" value="'.stripslashes($objet).'" tabindex="4" />
+				               </div>';
+				             
+				             if($err_message==0){
+				               echo '<div class="form-group">
+				                 <label for="textarea">Votre message* :</label>
+				                 <textarea id="message" name="message" class="form-control" rows="4">'.stripslashes($message_content).'</textarea>
+				                 <p class="help-block">Vous pouvez agrandir cette fenêtre</p>
+				               </div>';
+				             }
+				             else{
+				               echo '<div class="form-group has-warning">
+				                 <label for="textarea">Votre message* :</label>
+				                 <textarea id="message" name="message" class="form-control" rows="4">'.stripslashes($message_content).'</textarea>
+				                 <span class="help-block">Veuillez remplir ce champ</span>
+				                 <p class="help-block">Vous pouvez agrandir cette fenêtre</p>
+				               </div>';
+				             };
+				             echo '<button class="btn btn-md btn-default submit_form" name="envoi" type="submit">Send</button>
+				           </fieldset>
+				         </form>
+				    </div>
+				    ';
 				?>
 			</div>
 		</section>

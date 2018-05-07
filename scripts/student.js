@@ -249,13 +249,6 @@ jQuery(document).ready(function($){
     });
   });
   $(function () {
-    $(".see-more").click(function(){
-      $(this).prev().prev().hide();
-      $(this).prev().slideToggle("slow");
-      $(this).parent().parent().css({"height":'auto'});
-    });
-  });
-  $(function () {
     if ($(this).scrollTop() > 3200 && $(this).scrollTop() < 4310){
       var scroll = $(window).scrollTop()-3200;
       $('.member-container h2').css({'webkit-transform':'translateY('+scroll+'px)'});
