@@ -31,7 +31,7 @@
 	            <li class="branding-container"><a id="branding" href="index.php"><img src="media/images/nav_branding.png" alt="Branding de la JEMA"></a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="student.php">Étudiants</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="company.php">Entreprises</a></li>
-	            <li id="plaquette"><a class="plaquette" href="contact.php">Plaquette</a></li>
+	            <li id="plaquette"><a class="plaquette" href="contact.php">Contact</a></li>
 	          </ul>
 	        </div>
 		</nav>
@@ -43,7 +43,7 @@
 			<div class="main-title-border">
 				<div class="main-title text-center">
 					<h1>Cultivons votre réussite</h1>
-					<h2>Junior-Étude Montpellier SupAgro</h2>
+					<h2>Junior-Étude Montpellier Agro</h2>
 					<!--<img src="media/images/logo.png" alt="Logo de la JEMA">-->
 				</div>
 			</div>
