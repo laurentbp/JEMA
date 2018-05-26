@@ -22,6 +22,8 @@ a {
 
 .navbar-nav{
 	height:50px;
+	width:100%;
+	background-color: white;
 	position:relative;
 }
 
@@ -137,13 +139,13 @@ header{
 	overflow:hidden;
 	margin:0;
 	background-image: url('../media/images/student-header.jpg');
-	height:630px;
+	height:600px;
 	background-attachment: fixed;
 	background-position: middle;
 	background-repeat: no-repeat;
 	position:relative;
 }
-
+		
 .last-news{
 	background-color: rgba(0,0,0,0.3);
 	color:white;
@@ -208,6 +210,8 @@ header h2{
 	font-weight:900;
 	text-transform: uppercase;
 	letter-spacing: 1px;
+	margin-top:70px;
+	text-align: center
 }
 
 .video-container{
