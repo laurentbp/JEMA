@@ -1,3 +1,50 @@
+<?php 
+	session_start ();
+
+	/*
+	********************************************************************************************
+	CONFIGURATION
+	********************************************************************************************
+	*/
+
+	$login_admin="admin";
+	$pswd_admin="admin";
+
+	/*
+	 ********************************************************************************************
+	 FIN DE LA CONFIGURATION
+	 ********************************************************************************************
+	*/
+
+	 /*
+	* cette fonction sert à nettoyer et enregistrer un texte
+	*/
+	function Rec($text)
+	{
+		$text = htmlspecialchars(trim($text), ENT_QUOTES);
+		if (1 === get_magic_quotes_gpc())
+		{
+			$text = stripslashes($text);
+		}
+
+		$text = nl2br($text);
+		return $text;
+	};
+
+	if(isset($_POST['log'])){
+		$login     = (isset($_POST['login']))     ? Rec($_POST['login'])     : '';
+		$pswd     = (isset($_POST['password']))     ? Rec($_POST['password'])     : '';
+		if($login==$login_admin && $pswd==$pswd_admin){
+			$_SESSION['login']=$login;
+			echo '<body onLoad="alert(\'Bienvenue, Administrateur !\')">';
+		}
+		else{
+			echo '<body onLoad="alert(\'Identifiants non reconnus...\')">';
+		}
+	}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,11 +75,26 @@
 	        </div>
 	        <div class="collapse navbar-collapse">
 	          <ul class="nav navbar-nav">
-	            <li class="branding-container"><a id="branding" href="index.php"><img src="media/images/nav_branding.png" alt="Branding de la JEMA"></a></li>
+	            <li class="branding-container"><a id="branding" href="index.php"><img class="logo" src="media/images/nav_branding.png" alt="Logo de la JEMA"><img class="branding" src="media/images/logo.png" alt="Branding de la JEMA"></a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="student.php">Étudiants</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="company.php">Entreprises</a></li>
-	            <li id="plaquette"><a class="plaquette" href="contact.php">Plaquette</a></li>
 	          </ul>
+	          	<ul class="nav navbar-nav navbar-right">
+					<li id="social-nav">
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					</li>
+					<?php 
+						if(isset($_SESSION['login'])){	
+					?>
+						<li id="disconnect"><a href="disconnect.php">Déconnexion</a></li>
+					<?php 
+						}
+					?>
+					<li id="plaquette"><a class="plaquette" href="../contact.php">Plaquette</a></li>
+				</ul>
 	        </div>
 		</nav>
 
@@ -43,10 +105,11 @@
 			<div class="main-title-border">
 				<div class="main-title text-center">
 					<h1>Cultivons votre réussite</h1>
-					<h2>Junior-Étude Montpellier SupAgro</h2>
+					<h2>Junior-Étude Montpellier Agro</h2>
 					<!--<img src="media/images/logo.png" alt="Logo de la JEMA">-->
 				</div>
 			</div>
+			<img src="media/images/SUPA-logo.png" alt="Logo de Montpellier Supagro">
 			<div class="header-blank"></div>
 		</header>
 
@@ -59,7 +122,9 @@
 					<div class="left-student">
 						<h4>Étudiant</h4>
 						<span class="big-glyphicon glyphicon glyphicon-education"></span>
-						<p>Vous cherchez à participer à une étude ? Vous voulez vous faire un peu d'argent tout en travaillant pour le compte de grandes entreprises ? Vous souhaitez intégrer la JEMA en tant que membre actif ?</p>
+						<p>Vous cherchez à participer à une étude ?</p>
+						<p>Vous voulez vous faire un peu d'argent tout en travaillant pour le compte de grandes entreprises ?</p>
+						<p>Vous souhaitez intégrer la JEMA en tant que membre actif ?</p>
 					</div>
 					<div class="right-student">
 						<span class="glyphicon glyphicon-chevron-right"></span>
@@ -71,7 +136,9 @@
 					<div class="left-company">
 						<h4>Professionnel</h4>
 						<span class="big-glyphicon glyphicon glyphicon-briefcase"></span>
-						<p>Vous cherchez une étude dans le domaine de l'agronomie ? Vous disposez d'un budget trop serré pour faire appel aux bureaux d'étude traditionnels ? Vous souhaitez avoir la garantie d'un résultat à la fois économique et professionnel ?</p>
+						<p>Vous cherchez une étude dans le domaine de l'agronomie ?</p>
+						<p>Vous disposez d'un budget trop serré pour faire appel à un bureau d'étude ?</p>
+						<p>Vous souhaitez avoir la garantie d'un résultat professionnel ?</p>
 					</div>
 					<div class="right-company">
 						<span class="glyphicon glyphicon-chevron-right"></span>
@@ -91,12 +158,48 @@
 			</div>
 		</section>
 
+		<div id="admin-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Accès aux outils administrateur</h4>
+					</div>
+					<div class="modal-body">
+						<h1>Connexion</h1>
+						<form method="post" action="">
+							<div class="form-group">
+								<input class="form-control" id="login" type="text" name="login" placeholder="Identifiant" tabindex="10"/>
+							</div>
+							<div class="form-group">
+								<input class="form-control" id="password" type="password" name="password" placeholder="Mot de passe" tabindex="11"/>
+								<input class="form-control" id="url" type="hidden" name="url" value="student" />
+							</div>
+							<button class="btn btn-md btn-default submit_form" name="log" type="submit">Se connecter</button>
+						</form>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+
 		<footer class="footer text-center">
 			<div class="footer-contact col-lg-4 col-md-4 col-sm-4 col-xs-4">
 				<a href="contact.php">Nous contacter</a>
 				<p class="adresse">Junior Étude Montpellier Agro, <br>2 place Pierre Viala, <br>34060 Montpellier Cedex 02</p>
 				<p class="mail">jema@supagro.fr</p>
 				<a href="mentions.php">Mentions légales</a>
+				<?php 
+					if(!isset($_SESSION['login'])){
+				?>
+				<p><a data-toggle="modal" data-target="#admin-container" href="#">Administration</a></p>
+				<?php
+					}
+					else{
+				?>
+				<p><a href="disconnect.php">Déconnexion</a></p>
+				<?php
+					}
+				?>
 			</div>
 			<div class="footer-navigate col-lg-4 col-md-4 col-sm-4 col-xs-4">
 				<a href="plan.php">Plan du site</a>

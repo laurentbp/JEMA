@@ -1,3 +1,108 @@
+<?php 
+	session_start ();
+
+	/*
+	********************************************************************************************
+	CONFIGURATION
+	********************************************************************************************
+	*/
+	// destinataire est votre adresse mail.
+	$destinataire = 'jema@supagro.fr';
+
+	// copie ? (envoie une copie au visiteur)
+	$copie = 'no';
+
+	$login_admin="admin";
+	$pswd_admin="admin";
+	$extensions_valides = array( 'jpg' , 'jpeg' , 'gif' , 'png', 'JPG', 'JPEG', 'GIF', 'PNG');
+
+	/*
+	 ********************************************************************************************
+	 FIN DE LA CONFIGURATION
+	 ********************************************************************************************
+	*/
+
+	try
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=jema', 'root', '');
+	}
+	catch (Exception $e)
+	{
+	        die('Erreur : ' . $e->getMessage());
+	}
+	$bdd->exec('SET NAMES utf8');
+	$bdd->setAttribute( PDO::ATTR_EMULATE_PREPARES, false );
+	$bdd->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
+	/*
+	* cette fonction sert à nettoyer et enregistrer un texte
+	*/
+	function Rec($text)
+	{
+		$text = htmlspecialchars(trim($text), ENT_QUOTES);
+		if (1 === get_magic_quotes_gpc())
+		{
+			$text = stripslashes($text);
+		}
+
+		$text = nl2br($text);
+		return $text;
+	};
+
+   /*
+    * Cette fonction sert à vérifier la syntaxe d'un email
+    */
+   function IsEmail($email)
+   {
+     $value = preg_match('/^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!\.)){0,61}[a-zA-Z0-9_-]?\.)+[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!$)){0,61}[a-zA-Z0-9_]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/', $email);
+     return (($value === 0) || ($value === false)) ? false : true;
+   }
+
+	$news_title     = (isset($_POST['title']))     ? Rec($_POST['title'])     : '';
+	$news_content     = (isset($_POST['content']))     ? Rec($_POST['content'])     : '';
+	if(isset($_FILES['image'])) $extension_upload = strtolower(  substr(  strrchr($_FILES['image']['name'], '.')  ,1)  );
+	else $extension_upload = '';
+	$err_title=0;
+	$err_content=0;
+	$err_image=0;
+	$err_extension=0;
+	$err_size=0;
+
+	if(isset($_POST['log'])){
+		$login     = (isset($_POST['login']))     ? Rec($_POST['login'])     : '';
+		$pswd     = (isset($_POST['password']))     ? Rec($_POST['password'])     : '';
+		if($login==$login_admin && $pswd==$pswd_admin){
+			$_SESSION['login']=$login;
+			echo '<body onLoad="alert(\'Bienvenue, Administrateur !\')">';
+		}
+		else{
+			echo '<body onLoad="alert(\'Identifiants non reconnus...\')">';
+		}
+	}
+	elseif(isset($_POST['news'])){
+		if($news_title!="" && $news_content!="" && $_FILES['image']['error'] <= 0 && in_array($extension_upload,$extensions_valides) && $_FILES['image']['size']<=5242880){
+			$image_name="upload/".md5(uniqid(rand(), true));
+			$image_path="media/images/".$image_name;
+			if(move_uploaded_file($_FILES['image']['tmp_name'],$image_path)){
+				$req=$bdd->prepare("INSERT INTO news VALUES (?,?,?,CURRENT_TIMESTAMP,?)");
+				$req->execute(array(NULL,$news_title,$news_content,$image_name));
+			echo '<body onLoad="alert(\'Actualité bien publiée.\')">';
+			}
+			else{
+				echo '<body onLoad="alert(\'Erreur dans le téléversement du fichier, veuillez réessayer svp\')">';
+			}
+		}
+		else
+		{
+			if($news_title == '') $err_title=1;
+			if($news_content == '') $err_content=1;
+			if($_FILES['image']['error'] > 0) $err_image=1;
+			if(!in_array($extension_upload,$extensions_valides)) $err_extension=1;
+			if($_FILES['image']['size']>5242880) $err_size=0;
+		};
+	}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,13 +116,17 @@
   <link rel="stylesheet" href="styles/student.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="scripts/jquery.animateNumber.min.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script src="scripts/student.js"></script>
+  <script src="scripts/pagination.js"></script>
 </head>
 
 <body>
 
 	<div class="container-fluid">
+
+  	  <div class="nav-indicator-background"></div>
+  	  <div class="nav-indicator"></div>
 
 		<nav class="navbar navbar-default navbar-fixed-top">
         	<div class="navbar-header">
@@ -36,19 +145,40 @@
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#news">Actualités</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#contact">Contact</a></li>
 	          </ul>
+	          <ul class="nav navbar-nav navbar-right">
+	          	<li id="social-nav">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</li>
+	            <li class=""><span class="main-link-background"></span><a class="" href="index.php">Retour à l'accueil</a></li>
+	            <?php 
+	            	if(isset($_SESSION['login'])){	
+	            ?>
+            		<li class=""><a href="disconnect.php">Déconnexion</a></li>
+	            <?php 
+	            	}
+	            ?>
+	            </ul>
 	        </div>
 		</nav>
 
 		<header>
 			<div class="last-news text-center">
-				<p><strong>Dernière news (29/04/2018) :</strong> Nouveau site pour la JEMA ! [...] <a href="news.php">Voir plus...</a></p>
+				<p><strong>Dernière actualité (29/04/2018) :</strong> Nouveau site pour la JEMA ! [...] <a href="hidden/news.php">Voir plus...</a></p>
+			</div>
+			<div class="main-title text-center">
+				<h1>Section étudiants et adhérents</h1>
+				<h2>Voir la vidéo de présentation <span class="glyphicon glyphicon-arrow-right"></span></h2>
+				<div class="arrow-bottom">
+					<a class="scrollspy" href="index.php#about">Faire défiler <span class="glyphicon glyphicon-arrow-down"></span></a>
+				</div>
 			</div>
 			<div class="video-container">
-				<iframe width="800" height="450" src="https://www.youtube.com/embed/G5LKjCbbOig?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+				<iframe width="750" height="423" src="https://www.youtube.com/embed/G5LKjCbbOig?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 			</div>
-			<div class="arrow-bottom">
-				<a class="scrollspy" href="index.php#about">Faire défiler <span class="glyphicon glyphicon-arrow-down"></span></a>
-			</div>
+			
 			<div class="header-blank"></div>
 		</header>
 
@@ -146,20 +276,10 @@
 				</div>
 			</div>
 			<div id="news" class="rubrique news-container">
-				<h2>Actualités</h2>
+				<h2>Actualités étudiantes</h2>
 				<h3>Les dernières actualités de la JEMA</h3>
 				<?php 
 
-				try
-				{
-					$bdd = new PDO('mysql:host=localhost;dbname=jema', 'root', '');
-				}
-				catch (Exception $e)
-				{
-				        die('Erreur : ' . $e->getMessage());
-				}
-				$bdd->exec('SET NAMES utf8');
-				$bdd->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 				$news = $bdd->query('SELECT * FROM news');
 				$i=0;
 
@@ -167,7 +287,7 @@
 				{
 					if($i==0){
 				?>
-						<div class="col-lg-12 full-news">
+						<div class="col-lg-12 full-news news">
 					    	<div class="news-img">
 					    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
 					    	</div>
@@ -176,7 +296,17 @@
 					    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
 					    		<p class="news-preview"><?php if(strlen($new['content'])<600){ echo $new['content'];}else{ echo substr($new['content'],0,600).'[...]';} ?></p>
 					    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-					    		<a href="news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a>
+					    		<ul>
+						    		<li><a href="hidden/news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a></li>
+						    		<?php 
+										if(isset($_SESSION['login'])){
+									?>
+									<li><a href="hidden/news.php?action=delete&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-trash"></span></a></li>
+									<li><a href="hidden/news.php?action=modif&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-pencil"></span></a></li>
+									<?php
+										}
+									?>
+								</ul>
 					    	</div>
 					   	</div>
 			   	<?php
@@ -184,12 +314,12 @@
 					else{
 						if(($i%2)==0){
 				?>
-					<div class="col-lg-6 part-news">
+					<div class="col-lg-6 part-news news">
 				<?php
 						}
 						else{
 				?>
-				    <div class="col-lg-6 part-news news-margin">
+				    <div class="col-lg-6 part-news news-margin news">
 				<?php
 						}
 				?>
@@ -201,7 +331,17 @@
 				    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
 				    		<p class="news-preview"><?php if(strlen($new['content'])<300){ echo $new['content'];}else{ echo substr($new['content'],0,300).'[...]';} ?></p>
 				    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-				    		<a href="news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a>
+				    		<ul>
+					    		<li><a href="hidden/news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a></li>
+					    		<?php 
+									if(isset($_SESSION['login'])){
+								?>
+								<li><a href="hidden/news.php?action=delete&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-trash"></span></a></li>
+								<li><a href="hidden/news.php?action=modif&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-pencil"></span></a></li>
+								<?php
+									}
+								?>
+							</ul>
 				    	</div>
 				   	</div>
 				<?php
@@ -211,59 +351,42 @@
 
 				$news->closeCursor();
 				?>
+				<div id="page_navigation"> </div>
+				<?php 
+					if(isset($_SESSION['login'])){
+				?>
+				<div class="news-publish" id="publish">
+					<h3>Publier une actualité</h3>
+					<form method="post" action="student.php#publish" enctype="multipart/form-data">
+						<div class="form-group <?php if($err_title==1) echo'has-warning';?>">
+							<label for="title">Titre :</label>
+							<input class="form-control" type="text" id="title" name="title" placeholder="Titre de l'actualité" value="<?php echo stripslashes($news_title) ?>" tabindex="12" />
+							<?php if($err_title==1) echo'<span class="help-block">Veuillez remplir ce champ</span>';?>
+						</div>
+						<div class="form-group <?php if($err_content==1) echo'has-warning';?>">
+							<label for="textarea">Contenu :</label>
+							<textarea id="content" name="content" class="form-control" rows="4"><?php echo stripslashes($news_content) ?></textarea>
+							<p class="help-block">Vous pouvez agrandir cette fenêtre</p>
+							<?php if($err_content==1) echo'<span class="help-block">Veuillez remplir ce champ</span>';?>
+						</div>
+						<div class="form-group <?php if($err_image==1 || $err_size==1 || $err_extension==1) echo'has-warning';?>">
+							<label for="image">Image (taille maximale : 5 Mo) :</label>
+ 							<input type="file" name="image" id="image" /><br />
+ 							<?php if($err_image==1) echo'<span class="help-block">Un problème non spécifié est survenu lors du téléversement de l\'image.</span>'; elseif($err_size==1) echo'<span class="help-block">L\'image est trop grande.</span>'; elseif($err_extension==1) echo'<span class="help-block">L\'extension de l\'image n\'est pas valide (extensions autorisées : JPG, JPEG, GIF et PNG).</span>';?>
+						</div>
+						<div class="g-recaptcha" data-sitekey="your_site_key"></div>
+						<br><button class="btn btn-md btn-default submit_form" name="news" type="submit">Publier</button>
+					</form> 
+				</div>
+				<?php
+					}
+				?>
 			</div>
 			<div id="contact" class="rubrique contact-container">
 				<h2><span class="big-letter">N</span>ous contacter</h2>
 				<h3>Une question ? Envoyez-nous un mail !</h3>
 				<?php
-				  /*
-				   ********************************************************************************************
-				   CONFIGURATION
-				   ********************************************************************************************
-				   */
-				     // destinataire est votre adresse mail.
-				     $destinataire = 'jema@supagro.fr';
-				     //$destinataire = 'l.blancpattin@gmail.com';
 
-				     // copie ? (envoie une copie au visiteur)
-				     $copie = 'no';
-
-				     // Action du formulaire (si votre page a des paramètres dans l'URL)
-				     // si cette page est index.php?page=contact alors mettez index.php?page=contact
-				     // sinon, laissez vide
-				     $form_action = '';
-
-				   /*
-				     ********************************************************************************************
-				     FIN DE LA CONFIGURATION
-				     ********************************************************************************************
-				   */
-
-				   /*
-				    * cette fonction sert à nettoyer et enregistrer un texte
-				    */
-				   function Rec($text)
-				   {
-				     $text = htmlspecialchars(trim($text), ENT_QUOTES);
-				     if (1 === get_magic_quotes_gpc())
-				     {
-				       $text = stripslashes($text);
-				     }
-
-				     $text = nl2br($text);
-				     return $text;
-				   };
-
-				   /*
-				    * Cette fonction sert à vérifier la syntaxe d'un email
-				    */
-				   function IsEmail($email)
-				   {
-				     $value = preg_match('/^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!\.)){0,61}[a-zA-Z0-9_-]?\.)+[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!$)){0,61}[a-zA-Z0-9_]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/', $email);
-				     return (($value === 0) || ($value === false)) ? false : true;
-				   }
-
-				   // formulaire envoyé, on récupère tous les champs.
 				   $nom     = (isset($_POST['nom']))     ? Rec($_POST['nom'])     : '';
 				   $email   = (isset($_POST['email']))   ? Rec($_POST['email'])   : '';
 
@@ -290,7 +413,7 @@
 				   $err_email_confirm = 0;
 				   $err_formulaire = false; // sert pour remplir le formulaire en cas d'erreur si besoin
 
-				   if (isset($_POST['envoi']))
+				   if (isset($_POST['contact']))
 				   {
 				     // Si toutes les conditions du formulaire sont réunies (variables non vides, email valide et confirmation de l'email valide)...
 				     if (($nom != '') && ($email != '') && ($message != '') && (IsEmail($email) != false) && ($email === $email_confirm))
@@ -312,14 +435,10 @@
 
 				       // Envoi du mail
 				       if (mail($destinataire, $objet, $message, $headers)){
-				          echo '<div class="form-group has-success text-center alerts">
-				            <span class="help-block">Your message has been successfully sent !</span>
-				          </div>';
+							echo '<body onLoad="alert(\'Message bien envoyé\')">';
 				       }
 				       else{
-				          echo '<div class="form-group has-error text-center alertf">
-				            <span class="help-block">The mail sending failed, please retry.</span>
-				          </div>';
+							echo '<body onLoad="alert(\'Envoi du message échoué, veuillez réessayer svp.\')">';
 				       };
 				     }
 				     else
@@ -336,7 +455,7 @@
 
 				  echo '
 				    <div class="contact">
-				      <form method="post" action="'.$form_action.'">
+				      <form method="post" action="student.php#contact">
 				           <fieldset>';
 				             if($err_nom==0){
 				               echo '<div class="form-group">
@@ -373,13 +492,13 @@
 				             };
 				             if($err_email_confirm==0){
 				               echo '<div class="form-group">
-				                 <label for="email">Confirmez votre adresse mail* :</label>
+				                 <label for="email_confirm">Confirmez votre adresse mail* :</label>
 				                 <input class="form-control" type="text" id="email_confirm" name="email_confirm" placeholder="Confirmez votre adresse mail" value="'.stripslashes($email_confirm).'" tabindex="3" />
 				               </div>';
 				             }
 				             else{
 				               echo '<div class="form-group has-error">
-				                 <label for="email">Confirmez votre adresse mail* :</label>
+				                 <label for="email_confirm">Confirmez votre adresse mail* :</label>
 				                 <input class="form-control" type="text" id="email_confirm" name="email_confirm" placeholder="Confirmez votre adresse mail" value="'.stripslashes($email_confirm).'" tabindex="3" />
 				                 <span class="help-block">Les adresse mail ne correspondent pas</span>
 				               </div>';
@@ -404,14 +523,37 @@
 				                 <p class="help-block">Vous pouvez agrandir cette fenêtre</p>
 				               </div>';
 				             };
-				             echo '<button class="btn btn-md btn-default submit_form" name="envoi" type="submit">Send</button>
+				             ?>
+				             <button class="btn btn-md btn-default submit_form" name="contact" type="submit">Envoyer</button>
 				           </fieldset>
 				         </form>
-				    </div>
-				    ';
-				?>
+				    </div>	
 			</div>
 		</section>
+
+		<div id="admin-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Accès aux outils administrateur</h4>
+					</div>
+					<div class="modal-body">
+						<h1>Connexion</h1>
+						<form method="post" action="">
+							<div class="form-group">
+								<input class="form-control" id="login" type="text" name="login" placeholder="Identifiant" tabindex="10"/>
+							</div>
+							<div class="form-group">
+								<input class="form-control" id="password" type="password" name="password" placeholder="Mot de passe" tabindex="11"/>
+								<input class="form-control" id="url" type="hidden" name="url" value="student" />
+							</div>
+							<button class="btn btn-md btn-default submit_form" name="log" type="submit">Se connecter</button>
+						</form>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
 
 		<footer class="footer text-center">
 			<div class="footer-contact col-lg-4 col-md-4 col-sm-4 col-xs-4">
@@ -419,6 +561,18 @@
 				<p class="adresse">Junior Étude Montpellier Agro, <br>2 place Pierre Viala, <br>34060 Montpellier Cedex 02</p>
 				<p class="mail">jema@supagro.fr</p>
 				<a href="mentions.php">Mentions légales</a>
+				<?php 
+					if(!isset($_SESSION['login'])){
+				?>
+				<p><a data-toggle="modal" data-target="#admin-container" href="#">Administration</a></p>
+				<?php
+					}
+					else{
+				?>
+				<p><a href="disconnect.php">Déconnexion</a></p>
+				<?php
+					}
+				?>
 			</div>
 			<div class="footer-navigate col-lg-4 col-md-4 col-sm-4 col-xs-4">
 				<a href="plan.php">Plan du site</a>
