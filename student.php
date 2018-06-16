@@ -39,11 +39,7 @@
 	*/
 	function Rec($text)
 	{
-		$text = htmlspecialchars(trim($text), ENT_QUOTES);
-		if (1 === get_magic_quotes_gpc())
-		{
-			$text = stripslashes($text);
-		}
+		$text = strip_tags($text,'<a><strong><i>');
 
 		$text = nl2br($text);
 		return $text;
@@ -60,6 +56,8 @@
 
 	$news_title     = (isset($_POST['title']))     ? Rec($_POST['title'])     : '';
 	$news_content     = (isset($_POST['content']))     ? Rec($_POST['content'])     : '';
+	$news_title_edit     = (isset($_POST['title_edit']))     ? Rec($_POST['title_edit'])     : '';
+	$news_content_edit     = (isset($_POST['content_edit']))     ? Rec($_POST['content_edit'])     : '';
 	if(isset($_FILES['image'])) $extension_upload = strtolower(  substr(  strrchr($_FILES['image']['name'], '.')  ,1)  );
 	else $extension_upload = '';
 	$err_title=0;
@@ -67,6 +65,22 @@
 	$err_image=0;
 	$err_extension=0;
 	$err_size=0;
+	$edit=0;
+	            	
+	if(isset($_GET['action'])){
+		if($_GET['action']=="delete"){
+			if(isset($_SESSION['login'])){
+				$req = $bdd->query('SELECT * FROM news WHERE id='.$_GET['id']);
+				$new=$req->fetch(PDO::FETCH_ASSOC);
+				$bdd->query('DELETE FROM news WHERE id='.$new['id']);
+				echo '<body onLoad="alert(\'Actualité bien supprimée.\')">';
+				echo '<meta http-equiv="refresh" content="0;URL=student.php#news">';
+			}
+			else{
+				echo '<body onLoad="alert(\'Vous devez être connecté pour effectuer cette action\')">';
+			}
+		}
+	}
 
 	if(isset($_POST['log'])){
 		$login     = (isset($_POST['login']))     ? Rec($_POST['login'])     : '';
@@ -86,10 +100,12 @@
 			if(move_uploaded_file($_FILES['image']['tmp_name'],$image_path)){
 				$req=$bdd->prepare("INSERT INTO news VALUES (?,?,?,CURRENT_TIMESTAMP,?)");
 				$req->execute(array(NULL,$news_title,$news_content,$image_name));
-			echo '<body onLoad="alert(\'Actualité bien publiée.\')">';
+				echo '<body onLoad="alert(\'Actualité bien publiée.\')">';
+				echo '<meta http-equiv="refresh" content="0;URL=student.php#publish">';
 			}
 			else{
 				echo '<body onLoad="alert(\'Erreur dans le téléversement du fichier, veuillez réessayer svp\')">';
+				echo '<meta http-equiv="refresh" content="0;URL=student.php#news">';
 			}
 		}
 		else
@@ -101,27 +117,91 @@
 			if($_FILES['image']['size']>5242880) $err_size=0;
 		};
 	}
+	elseif(isset($_POST['news-edit'])){
+		$req = $bdd->query('SELECT * FROM news WHERE id='.$_POST['id-news']);
+		$new_ref=$req->fetch(PDO::FETCH_ASSOC);
+		
+		if($_FILES['image']['error'] <= 0 && in_array($extension_upload,$extensions_valides) && $_FILES['image']['size']<=5242880){
+			$image_name="upload/".md5(uniqid(rand(), true));
+			$image_path="media/images/".$image_name;
+			if($new_ref['image']!=$image_name){
+				if(move_uploaded_file($_FILES['image']['tmp_name'],$image_path)){
+					$req1=$bdd->prepare("UPDATE news SET image=? WHERE id=?");
+					$req1->execute(array($image_name,$new_ref['id']));
+					$edit=1;
+				}
+				else{
+					echo '<body onLoad="alert(\'Erreur dans le téléversement du fichier, veuillez réessayer svp\')">';
+					echo '<meta http-equiv="refresh" content="0;URL=student.php#news">';
+				}
+			}
+		}
+		if($news_title_edit!="" && $new_ref['title']!=$news_title_edit){
+			$req2=$bdd->prepare("UPDATE news SET title=? WHERE id=?");
+			$req2->execute(array($news_title_edit,$new_ref['id']));
+			$edit=1;
+		}
+		if($news_content_edit!="" && $new_ref['content']!=$news_content_edit){
+			$req3=$bdd->prepare("UPDATE news SET content=? WHERE id=?");
+			$req3->execute(array($news_content_edit,$new_ref['id']));
+			$edit=1;
+		}
+		if($edit==1){
+			echo '<body onLoad="alert(\'Actualité bien éditée.\')">';
+			echo '<meta http-equiv="refresh" content="0;URL=student.php#news">';
+		}
+	}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="language" content="fr" />
-  <meta name="description" content="" />
-  <title>JEMA - Junior Etude Montpellier Agro - Étudiants</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="styles/student.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <script src="scripts/student.js"></script>
-  <script src="scripts/pagination.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="language" content="fr" />
+	<meta name="description" content="" />
+	<title>JEMA - Junior Etude Montpellier Agro - Étudiants</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="styles/student.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.ckeditor.com/4.9.2/basic/ckeditor.js"></script>
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+	<script src="scripts/student.js"></script>
+	<script src="scripts/pagination.js"></script>
 </head>
 
 <body>
+
+	<div class="windows-size-check"></div>
+
+	<!--  MODAL WINDOWS -->
+		<div id="admin-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Accès aux outils administrateur</h4>
+					</div>
+					<div class="modal-body">
+						<h1>Connexion</h1>
+						<form method="post" action="">
+							<div class="form-group">
+								<input class="form-control" id="login" type="text" name="login" placeholder="Identifiant" tabindex="10"/>
+							</div>
+							<div class="form-group">
+								<input class="form-control" id="password" type="password" name="password" placeholder="Mot de passe" tabindex="11"/>
+								<input class="form-control" id="url" type="hidden" name="url" value="student" />
+							</div>
+							<button class="btn btn-md btn-default submit_form" name="log" type="submit">Se connecter</button>
+						</form>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+
+	<div class="anchor-top"><a href="#">Retour en haut</a></div>
 
 	<div class="container-fluid">
 
@@ -135,10 +215,10 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	          </button>
+	          <div class="branding-container"><a id="branding" href="#"><img src="media/images/nav_branding.png" alt="Branding de la JEMA"></a></div>
 	        </div>
 	        <div class="collapse navbar-collapse">
 	          <ul class="nav navbar-nav">
-	            <li class="branding-container"><a id="branding" href="index.php"><img src="media/images/nav_branding.png" alt="Branding de la JEMA"></a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#about">Qui sommes-nous ?</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#faq">Participer à une étude</a></li>
 	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a class="scrollspy" href="student.php#member">Devenir membre actif</a></li>
@@ -152,7 +232,7 @@
 					<div></div>
 					<div></div>
 				</li>
-	            <li class=""><span class="main-link-background"></span><a class="" href="index.php">Retour à l'accueil</a></li>
+	            <li class=""><a id="back" class="" href="index.php">Retour à l'accueil</a></li>
 	            <?php 
 	            	if(isset($_SESSION['login'])){	
 	            ?>
@@ -165,8 +245,12 @@
 		</nav>
 
 		<header>
+			<?php 
+				$req = $bdd->query('SELECT * FROM news WHERE id=(SELECT MAX(id) FROM news)');
+				$last_new=$req->fetch(PDO::FETCH_ASSOC);
+			?>
 			<div class="last-news text-center">
-				<p><strong>Dernière actualité (29/04/2018) :</strong> Nouveau site pour la JEMA ! [...] <a href="hidden/news.php">Voir plus...</a></p>
+				<p><strong>Dernière actualité (<?php echo $last_new['date']; ?>) :</strong> <?php echo $last_new['title']; ?> [...] <a href="student.php#news" class="scrollspy">Voir plus...</a></p>
 			</div>
 			<div class="main-title text-center">
 				<h1>Section étudiants et adhérents</h1>
@@ -176,7 +260,7 @@
 				</div>
 			</div>
 			<div class="video-container">
-				<iframe width="750" height="423" src="https://www.youtube.com/embed/G5LKjCbbOig?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+				<iframe src="https://www.youtube.com/embed/G5LKjCbbOig?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 			</div>
 			
 			<div class="header-blank"></div>
@@ -193,8 +277,43 @@
 				</div>
 				<div class="wrapper">
 					<div class="team">
-						<p>Elle est composée de 23 élèves ingénieurs de Montpellier SupAgro et est renouvelée annuellement suite à une formation de 4 mois auprès de l’équipe précédente.</p>
-						<p>Motivés et dynamiques, les membres de la JEMA s’investissent pour que l’association ne cesse de progresser. Ils sont à votre service pour vous fournir les meilleures prestations.</p>
+						<div class="team-pictures-container">
+							<h4><span class="glyphicon glyphicon-user"></span><div class="team-picture-text">Bureau</div></h4>
+							<h4><span class="glyphicon glyphicon-user"></span><div class="team-picture-text">Trésorerie</div></h4>
+							<h4><span class="glyphicon glyphicon-user"></span><div class="team-picture-text">Communication</div></h4>
+							<h4><span class="glyphicon glyphicon-user"></span><div class="team-picture-text">Qualité</div></h4>
+							<h4><span class="glyphicon glyphicon-user"></span><div class="team-picture-text">Développement commercial</div></h4>
+						</div>
+						<div class="team-description">
+							<span class="team-marker">Bureau</span>
+							<h3>Le bureau</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+						</div>
+						<div class="team-description">
+							<span class="team-marker">Trésorerie</span>
+							<h3>La trésorerie</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+						</div>
+						<div class="team-description">
+							<span class="team-marker">Communication</span>
+							<h3>Le pôle communication</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+						</div>
+						<div class="team-description">
+							<span class="team-marker">Qualité</span>
+							<h3>Le pôle qualité</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+						</div>
+						<div class="team-description">
+							<span class="team-marker">Développement commercial</span>
+							<h3>Le développement commercial</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
+						</div>
+						<div class="active-team-description default-team-description team-description">
+							<p>Elle est composée de 23 élèves ingénieurs de Montpellier SupAgro et est renouvelée annuellement suite à une formation de 4 mois auprès de l’équipe précédente.</p>
+							<p>Motivés et dynamiques, les membres de la JEMA s’investissent pour que l’association ne cesse de progresser. Ils sont à votre service pour vous fournir les meilleures prestations.</p>
+							<p><span class="glyphicon glyphicon-arrow-left"></span>Pour plus d'informations sur les différents pôles de la JEMA, cliquez sur les images à gauche.</p>
+						</div>
 					</div>
 					<div class="about-left">
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
@@ -219,7 +338,7 @@
 							</div>
 						</div>
 						<div class="col-lg-7 year-description">
-							<p class="active-description">La JEMA a été fondée en 2009 à l’initiative d’Audrey Tardieu, étudiante de Montpellier SupAgro, qui avait pour projet de créer une structure professionnelle gérée par des étudiants de l’école, à l’image d’une Junior-Entreprise. Son but était de permettre aux élèves de se familiariser avec le monde de l’entreprise dès leur intégration dans l’école.<br>La première étude, « Etude de positionnement de la production de légumes sous serres à énergie renouvelable en Languedoc-Roussillon » a débuté en décembre 2009, permettant d’embaucher quatre étudiants. Des clients comme l’INRA, Montpellier SupAgro ou le CEMAGREF ont ensuite fait appel à nos services.</p>
+							<p class="active-description">La JEMA a été fondée en 2009 à l’initiative d’Audrey Tardieu, étudiante de Montpellier SupAgro, qui avait pour projet de créer une structure professionnelle gérée par des étudiants de l’école, à l’image d’une Junior-Entreprise. Son but était de permettre aux élèves de se familiariser avec le monde de l’entreprise dès leur intégration dans l’école.</p>
 							<p>Pépinière Junior-Entreprise au sein de la Confédération Nationale des Junior-Entreprises (CNJE) depuis 2009, la JEMA a obtenu le 25 octobre 2015 le statut de Junior-Entreprise, gage de notre fiabilité et de notre efficacité.</p>
 							<p>2017 - 24 membres actifs, 350 adhérents</p>
 							<p>2018 - Aujourd'hui</p>
@@ -234,12 +353,13 @@
 				<div class="numbers numbers-ca"><h3><span class="count">24402</span> €</h3><h4>Chiffre d'affaires HT en 2015</h4></div>
 			</div>
 			<div class="rubrique mot-container">
-				<div class="col-lg-8 mot">
-					<img src="media/images/left-quote.png" class="left-quote" alt="Quote"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat. Quisque nec metus non magna pulvinar porta sit amet quis turpis. Integer id tincidunt tellus, eu tincidunt tortor. Integer vel turpis non augue pulvinar aliquam. Nullam vulputate nisi vel ipsum consequat, vel tempor tellus pellentesque. Nulla et commodo augue. Quisque auctor ullamcorper euismod. Pellentesque pulvinar viverra purus ac sollicitudin. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum non nibh ac tortor semper iaculis.</p><img src="media/images/right-quote.png" class="right-quote" alt="Quote"></span>
-				</div>
-				<div class="col-lg-4">
+				<div class="mot-container-title col-lg-4 col-md-3 col-sm-3 col-xs-12">
 					<h2><span class="big-letter">L</span>e mot de la présidente</h2>
 					<h3>Mélissa Hoffmann-Bernard</h3> 
+					<div class="mot-picture"><span class="glyphicon glyphicon-user"></span></div>
+				</div>
+				<div class="col-lg-8 mot col-md-9 col-sm-9 col-xs-12">
+					<img src="media/images/left-quote.png" class="left-quote" alt="Quote"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat. Quisque nec metus non magna pulvinar porta sit amet quis turpis. Integer id tincidunt tellus, eu tincidunt tortor. Integer vel turpis non augue pulvinar aliquam. Nullam vulputate nisi vel ipsum consequat, vel tempor tellus pellentesque. Nulla et commodo augue. Quisque auctor ullamcorper euismod. Pellentesque pulvinar viverra purus ac sollicitudin. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum non nibh ac tortor semper iaculis.</p><img src="media/images/right-quote.png" class="right-quote" alt="Quote"></span>
 				</div>
 			</div>
 			<div id="faq" class="rubrique faq-container">
@@ -259,10 +379,10 @@
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui. Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo. Suspendisse aliquet quis ipsum sed placerat.</p>
 			</div>
 			<div id="member" class="rubrique member-container">
-				<div class="col-lg-6">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<h2><span class="big-letter">V</span>ivez l'aventure de l'intérieur</h2>
 				</div>
-				<div class="col-lg-6 member">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 member">
 					<h3>Devenez membre actif !</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas congue mi in dolor consequat consequat. Aenean ac nisi a ipsum pellentesque sagittis et non dui.</p>
 					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
 					<p>Nullam volutpat non lorem id fermentum. Nulla vel mattis lorem. Cras placerat purus at odio blandit gravida. Integer interdum tempor risus vel commodo.</p>
@@ -278,80 +398,65 @@
 			<div id="news" class="rubrique news-container">
 				<h2>Actualités étudiantes</h2>
 				<h3>Les dernières actualités de la JEMA</h3>
+				<div class="page_navigation"> </div>
 				<?php 
 
-				$news = $bdd->query('SELECT * FROM news');
+				$news = $bdd->query('SELECT * FROM news ORDER BY id DESC');
 				$i=0;
 
 				while ($new = $news->fetch())
 				{
-					if($i==0){
 				?>
-						<div class="col-lg-12 full-news news">
-					    	<div class="news-img">
-					    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
-					    	</div>
-					    	<div class="news-content">
-					    		<h4><?php echo $new['title']; ?></h4>
-					    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
-					    		<p class="news-preview"><?php if(strlen($new['content'])<600){ echo $new['content'];}else{ echo substr($new['content'],0,600).'[...]';} ?></p>
-					    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-					    		<ul>
-						    		<li><a href="hidden/news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a></li>
-						    		<?php 
-										if(isset($_SESSION['login'])){
-									?>
-									<li><a href="hidden/news.php?action=delete&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-trash"></span></a></li>
-									<li><a href="hidden/news.php?action=modif&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-pencil"></span></a></li>
-									<?php
-										}
-									?>
-								</ul>
-					    	</div>
-					   	</div>
-			   	<?php
-					}
-					else{
-						if(($i%2)==0){
-				?>
-					<div class="col-lg-6 part-news news">
-				<?php
-						}
-						else{
-				?>
-				    <div class="col-lg-6 part-news news-margin news">
-				<?php
-						}
-				?>
-				    	<div class="news-img">
-				    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
+					<div class="news">
+
+				    	<div class="news-edit">
+				    		<form method="post" action="student.php#edit" enctype="multipart/form-data">
+					    		<div class="form-group">
+						    		<input class="form-control" type="text" id="title" name="title_edit" placeholder="Titre de l'actualité" value="<?php echo $new['title']; ?>" tabindex="12" />
+						    	</div>
+						    	<div class="image-edit form-group">
+		  							<img class="image-preview" src="media/images/<?php echo $new['image']; ?>" alt="Aperçu de l'image" />
+		 							<input type="file" name="image" class="image-news" /><br />
+								</div>
+						    	<div class="text-edit form-group">
+									<textarea id="ed<?php echo $new['id']; ?>" name="content_edit" class="editor form-control" rows="4"><?php echo $new['content']; ?></textarea>
+								</div>
+
+								<script>
+									CKEDITOR.replace( 'ed<?php echo $new['id']; ?>' );
+									CKEDITOR.add();
+								</script>
+								<input type="hidden" name="id-news" value="<?php echo $new['id']; ?>" />
+								<br><button class="btn btn-md btn-default submit_form" name="news-edit" type="submit">Publier</button>
+								<div class="news-edit-cancel">Annuler</div>
+							</form>
+
 				    	</div>
+
 				    	<div class="news-content">
-				    		<h4><?php echo $new['title']; ?></h4>
-				    		<h5><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></h5>
-				    		<p class="news-preview"><?php if(strlen($new['content'])<300){ echo $new['content'];}else{ echo substr($new['content'],0,300).'[...]';} ?></p>
-				    		<p class="news-fullview"><?php echo $new['content']; ?></p>
-				    		<ul>
-					    		<li><a href="hidden/news.php?id=<?php echo $new['id']; ?>" class="see-more">Voir plus...</a></li>
-					    		<?php 
-									if(isset($_SESSION['login'])){
+			    			<h4><?php echo $new['title']; ?><span class="news-date"><?php echo 'Publié le <span class="big-letter">'.$new['date'].'</span>'; ?></span></h4>
+			    			<div class="b-description_readmore b-description_readmore_ellipsis js-description_readmore">
+						    	<div class="news-img">
+						    		<img src="media/images/<?php echo $new['image']; ?>" alt="Image news - <?php echo $new['title']; ?>">
+						    	</div>
+						    	<?php echo $new['content'];
+
+								if(isset($_SESSION['login'])){
 								?>
-								<li><a href="hidden/news.php?action=delete&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-trash"></span></a></li>
-								<li><a href="hidden/news.php?action=modif&id=<?php echo $new['id']; ?>" class="news-button"><span class="glyphicon glyphicon-pencil"></span></a></li>
+								<a onclick="javascript:if(!confirm('Confirmer la suppression ?')){return false;}" href="student.php?action=delete&id=<?php echo $new['id']; ?>"><div class="news-button"><span class="glyphicon glyphicon-trash"></span></div></a>
+								<div class="news-button edit"><span class="glyphicon glyphicon-pencil"></span></div>
 								<?php
 									}
 								?>
-							</ul>
+				    		</div>
 				    	</div>
 				   	</div>
 				<?php
-					}
-					$i++;
 				}
 
 				$news->closeCursor();
 				?>
-				<div id="page_navigation"> </div>
+				<div class="page_navigation"> </div>
 				<?php 
 					if(isset($_SESSION['login'])){
 				?>
@@ -365,13 +470,19 @@
 						</div>
 						<div class="form-group <?php if($err_content==1) echo'has-warning';?>">
 							<label for="textarea">Contenu :</label>
-							<textarea id="content" name="content" class="form-control" rows="4"><?php echo stripslashes($news_content) ?></textarea>
-							<p class="help-block">Vous pouvez agrandir cette fenêtre</p>
+							<textarea id="editor" name="content" class="editor form-control" rows="4"><?php echo stripslashes($news_content) ?></textarea>
+
+							<script>
+								CKEDITOR.replace( 'editor' );
+								CKEDITOR.add();
+							</script>
+
 							<?php if($err_content==1) echo'<span class="help-block">Veuillez remplir ce champ</span>';?>
 						</div>
 						<div class="form-group <?php if($err_image==1 || $err_size==1 || $err_extension==1) echo'has-warning';?>">
-							<label for="image">Image (taille maximale : 5 Mo) :</label>
- 							<input type="file" name="image" id="image" /><br />
+							<label for="image-news">Image (taille maximale : 5 Mo) :</label><br />
+  							<img class="image-preview" src="#" alt="Aperçu de l'image" />
+ 							<input type="file" name="image" id="image-news" class="image-news" /><br />
  							<?php if($err_image==1) echo'<span class="help-block">Un problème non spécifié est survenu lors du téléversement de l\'image.</span>'; elseif($err_size==1) echo'<span class="help-block">L\'image est trop grande.</span>'; elseif($err_extension==1) echo'<span class="help-block">L\'extension de l\'image n\'est pas valide (extensions autorisées : JPG, JPEG, GIF et PNG).</span>';?>
 						</div>
 						<div class="g-recaptcha" data-sitekey="your_site_key"></div>
@@ -531,30 +642,6 @@
 			</div>
 		</section>
 
-		<div id="admin-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="myModalLabel">Accès aux outils administrateur</h4>
-					</div>
-					<div class="modal-body">
-						<h1>Connexion</h1>
-						<form method="post" action="">
-							<div class="form-group">
-								<input class="form-control" id="login" type="text" name="login" placeholder="Identifiant" tabindex="10"/>
-							</div>
-							<div class="form-group">
-								<input class="form-control" id="password" type="password" name="password" placeholder="Mot de passe" tabindex="11"/>
-								<input class="form-control" id="url" type="hidden" name="url" value="student" />
-							</div>
-							<button class="btn btn-md btn-default submit_form" name="log" type="submit">Se connecter</button>
-						</form>
-					</div>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-
 		<footer class="footer text-center">
 			<div class="footer-contact col-lg-4 col-md-4 col-sm-4 col-xs-4">
 				<a href="contact.php">Nous contacter</a>
@@ -612,5 +699,4 @@
 		</footer>
 
 	</div>
-
 </body>

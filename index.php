@@ -65,6 +65,8 @@
 
 	<div class="container-fluid">
 
+		<div class="windows-size-check"></div>
+
 		<nav class="navbar navbar-default navbar-fixed-top">
         	<div class="navbar-header">
 	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -72,12 +74,12 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	          </button>
+	          <div class="branding-container"><a id="branding" href="index.php"><img class="logo" src="media/images/nav_branding.png" alt="Logo de la JEMA"><img class="branding" src="media/images/logo.png" alt="Branding de la JEMA"></a></div>
 	        </div>
 	        <div class="collapse navbar-collapse">
 	          <ul class="nav navbar-nav">
-	            <li class="branding-container"><a id="branding" href="index.php"><img class="logo" src="media/images/nav_branding.png" alt="Logo de la JEMA"><img class="branding" src="media/images/logo.png" alt="Branding de la JEMA"></a></li>
-	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="student.php">Étudiants</a></li>
-	            <li class="nav-links nav-main-link"><span class="main-link-background"></span><a href="company.php">Entreprises</a></li>
+	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="student.php">Étudiants</a></li>
+	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="company.php">Entreprises</a></li>
 	          </ul>
 	          	<ul class="nav navbar-nav navbar-right">
 					<li id="social-nav">
@@ -93,6 +95,7 @@
 					<?php 
 						}
 					?>
+					<li id="devis"><a class="plaquette" href="company.php#devis">Devis</a></li>
 					<li id="plaquette"><a class="plaquette" href="../contact.php">Plaquette</a></li>
 				</ul>
 	        </div>
@@ -109,7 +112,6 @@
 					<!--<img src="media/images/logo.png" alt="Logo de la JEMA">-->
 				</div>
 			</div>
-			<img src="media/images/SUPA-logo.png" alt="Logo de Montpellier Supagro">
 			<div class="header-blank"></div>
 		</header>
 
@@ -117,7 +119,7 @@
 			<div class="arrow-bottom">
 				<a class="scrollspy" href="index.php#redirect">Faire défiler <span class="glyphicon glyphicon-arrow-down"></span></a>
 			</div>
-			<div class="text-center student-redirection">
+			<div class="text-center student-redirection student-redirection-hover">
 				<a href="student.php">
 					<div class="left-student">
 						<h4>Étudiant</h4>
@@ -131,7 +133,7 @@
 					</div>
 				</a>
 			</div>
-			<div class="text-center company-redirection">
+			<div class="text-center company-redirection company-redirection-hover">
 				<a href="company.php">
 					<div class="left-company">
 						<h4>Professionnel</h4>
@@ -146,14 +148,24 @@
 				</a>
 			</div>
 			<div id="about" class="rubrique about">
-
-			<div class="about-redirection"><a class="scrollspy-minus" href="index.php#about">Qu'est-ce que la JEMA ?</a></div>
-				<div class="description-container">
-					<p>Fondée en 2009, la <span class="big-letter">J</span>unior <span class="big-letter">E</span>tude <span class="big-letter">M</span>ontpellier <span class="big-letter">A</span>gro est une association d'étudiants réalisant des études d'agronomie pour des entreprises.</p>
-					<p>Le but initial était de familiariser les étudiants avec le monde de l'entreprise. Depuis, des clients comme l'INRA, Montpellier SupAgro ou le CEMAGREF ont fait appel à nos services.</p>
-					<p>Pour poursuivre votre visite, veuillez cliquer sur l'une des deux rubriques <a class="scrollspy" href="index.php#redirect">ci-dessus <span class="glyphicon glyphicon-arrow-up"></a> !</p>
+				<div class="about-redirection"><div><a class="redirection scrollspy-minus active" href="index.php#about">Qu'est-ce que la JEMA ?</a></div></div>
+				<div class="description">
+					<div class="description-container">
+						<p>Fondée en 2009, la <span class="big-letter">J</span>unior <span class="big-letter">E</span>tude <span class="big-letter">M</span>ontpellier <span class="big-letter">A</span>gro est une association d'étudiants réalisant des études d'agronomie pour des entreprises.</p>
+						<p>Le but initial était de familiariser les étudiants avec le monde de l'entreprise. Depuis, des clients comme l'INRA, Montpellier SupAgro ou le CEMAGREF ont fait appel à nos services.</p>
+						<p>Pour poursuivre votre visite, veuillez cliquer sur l'une des deux rubriques <a class="scrollspy" href="index.php#redirect">ci-dessus <span class="glyphicon glyphicon-arrow-up"></span></a> ! Pour plus d'informations sur notre école, veuillez poursuivre <a class="scrollspy" href="index.php#school">ci-dessous <span class="glyphicon glyphicon-arrow-down"></span></a></p>
+					</div>
+					<img src="media/images/team.jpg" alt="Équipe de la JEMA">
 				</div>
-				<div class="illustration-container">
+			</div>
+			<img class="separator" src="media/images/nav_branding.png" alt="Logo de la JEMA">
+			<div class="our-school" id="school">
+				<img src="media/images/school.jpg" alt="École de Montpellier Supagro">
+				<div class="our-school-container">
+					<h3>Notre école</h3>
+					<p><span class="big-letter">M</span>ontpellier <span class="big-letter">S</span>upAgro est un centre international d’études supérieures en sciences agronomiques, établissement public à caractère scientifique culturel et professionnel (EPSCP).</p>
+					<p>Il est sous la tutelle du Ministère de l’agriculture, de l’agroalimentaire, et de la forêt et a la particularité d’être largement ouvert sur la Méditerranée et les pays du Sud.</p>
+					<p class="minus-text"><img src="media/images/SUPA-logo.png" alt="Logo de Montpellier Supagro">Pour plus d’informations : <a href="http://www.supagro.fr">http://www.supagro.fr</a></p>
 				</div>
 			</div>
 		</section>
@@ -187,6 +199,7 @@
 				<a href="contact.php">Nous contacter</a>
 				<p class="adresse">Junior Étude Montpellier Agro, <br>2 place Pierre Viala, <br>34060 Montpellier Cedex 02</p>
 				<p class="mail">jema@supagro.fr</p>
+				<img class="footer-school" src="media/images/SUPA-logo.png" alt="Logo de Montpellier Supagro">
 				<a href="mentions.php">Mentions légales</a>
 				<?php 
 					if(!isset($_SESSION['login'])){
