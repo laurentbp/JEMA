@@ -1,8 +1,10 @@
+
 function checkSize(){
     return $('.windows-size-check').css('opacity');
 }
 
 jQuery(document).ready(function($){
+  $(".se-pre-con").fadeOut("slow");;
   var state=0;
   var state2=0;
   $(window).resize(function () {

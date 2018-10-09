@@ -58,10 +58,13 @@
   <link rel="stylesheet" href="styles/index.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="scripts/loader.js"></script>
   <script src="scripts/index.js"></script>
 </head>
 
 <body>
+
+	<div class="loader"></div>
 
 	<div class="container-fluid">
 
@@ -78,8 +81,8 @@
 	        </div>
 	        <div class="collapse navbar-collapse">
 	          <ul class="nav navbar-nav">
-	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="student.php">Étudiants</a></li>
-	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="company.php">Entreprises</a></li>
+	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="student/student.php">Étudiants</a></li>
+	            <li class="nav-links nav-main-link nav-main-link-hover"><span class="main-link-background"></span><a href="company/company.php">Entreprises</a></li>
 	          </ul>
 	          	<ul class="nav navbar-nav navbar-right">
 					<li id="social-nav">

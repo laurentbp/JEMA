@@ -166,6 +166,7 @@
 	<link rel="stylesheet" href="styles/company.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script src="scripts/loader.js"></script>
 	<script src="https://cdn.ckeditor.com/4.9.2/basic/ckeditor.js"></script>
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 	<script src="scripts/company.js"></script>
@@ -173,6 +174,8 @@
 </head>
 
 <body>
+	
+	<div class="loader"></div>
 
 	<!--  MODAL WINDOWS -->
 		<div id="admin-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
