@@ -1,0 +1,13 @@
+Options +FollowSymlinks
+RewriteEngine On
+RewriteRule	^/$	index.php	[L]
+RewriteRule	^accueil$	index.php	[L]
+RewriteRule	^etudiant$	student.php	[L]
+RewriteRule	^professionnel$	company.php	[L]
+RewriteRule	^etudiant-suppression-([0-9]+)$	student.php?action=delete&id=$1	[L]
+RewriteRule	^professionnel-suppression$	company.php?action=delete	[L]
+RewriteRule	^contact$	contact.php	[L]
+RewriteRule	^admin$	log.php	[L]
+RewriteRule	^deconnexion$	disconnect.php	[L]
+RewriteRule	^actualite-([0-9]+)-edition$	news.php?action=edit&id=$1	[L]
+RewriteRule	^actualite-([0-9]+)$ news.php?id=$1 [L]	
